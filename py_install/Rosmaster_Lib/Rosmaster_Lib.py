@@ -126,7 +126,7 @@ class Rosmaster(object):
             print("Rosmaster Serial Opened! Baudrate=115200")
         else:
             print("Serial Open Failed!")
-        # 打开机械臂的扭矩力，避免6号舵机首次插上去读不到角度。
+        # Enable the torque of the robotic arm to prevent the 6th servo from failing to read the angle when first plugged in.
         self.set_uart_servo_torque(1)
         time.sleep(.002)
 
