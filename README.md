@@ -4,7 +4,7 @@ This repository provides the STM32 setup files and instructions necessary for in
 
 ## Overview
 
-These instructions cover the STM32 setup for communication with ROS. The setup process is based on resources provided by Yahboom, with modifications for improved clarity and usability.
+These instructions cover the STM32 setup for communication with Python. The setup process is based on resources provided by Yahboom, with modifications for improved clarity and usability.
 
 ## Installation
 
