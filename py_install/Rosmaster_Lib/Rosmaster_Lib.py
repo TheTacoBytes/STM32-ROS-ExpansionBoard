@@ -135,7 +135,7 @@ class Rosmaster(object):
         self.__uart_state = 0
         print("serial Close!")
 
-    # 根据数据帧的类型来做出对应的解析
+
     # According to the type of data frame to make the corresponding parsing
     def __parse_data(self, ext_type, ext_data):
         # print("parse_data:", ext_data, ext_type)
@@ -145,25 +145,25 @@ class Rosmaster(object):
             self.__vy = int(struct.unpack('h', bytearray(ext_data[2:4]))[0]) / 1000.0
             self.__vz = int(struct.unpack('h', bytearray(ext_data[4:6]))[0]) / 1000.0
             self.__battery_voltage = struct.unpack('B', bytearray(ext_data[6:7]))[0]
-        # 解析MPU9250原始陀螺仪、加速度计、磁力计数据
+        
         # (MPU9250)the original gyroscope, accelerometer, magnetometer data
         elif ext_type == self.FUNC_REPORT_MPU_RAW:
-            # 陀螺仪传感器:±500dps=±500°/s ±32768 (gyro/32768*500)*PI/180(rad/s)=gyro/3754.9(rad/s)
+            # Gyroscope sensor: ±500 dps = ±500°/s ±32768. (gyro/32768500)PI/180 (rad/s) = gyro/3754.9 (rad/s)
             gyro_ratio = 1 / 3754.9 # ±500dps
             self.__gx = struct.unpack('h', bytearray(ext_data[0:2]))[0]*gyro_ratio
             self.__gy = struct.unpack('h', bytearray(ext_data[2:4]))[0]*-gyro_ratio
             self.__gz = struct.unpack('h', bytearray(ext_data[4:6]))[0]*-gyro_ratio
-            # 加速度传感器:±2g=±2*9.8m/s^2 ±32768 accel/32768*19.6=accel/1671.84
+            # Accelerometer sensor: ±2g = ±2 * 9.8 m/s² ±32768. accel/32768*19.6 = accel/1671.84
             accel_ratio = 1 / 1671.84
             self.__ax = struct.unpack('h', bytearray(ext_data[6:8]))[0]*accel_ratio
             self.__ay = struct.unpack('h', bytearray(ext_data[8:10]))[0]*accel_ratio
             self.__az = struct.unpack('h', bytearray(ext_data[10:12]))[0]*accel_ratio
-            # 磁力计传感器
+            # Magnetometer sensor
             mag_ratio = 1.0
             self.__mx = struct.unpack('h', bytearray(ext_data[12:14]))[0]*mag_ratio
             self.__my = struct.unpack('h', bytearray(ext_data[14:16]))[0]*mag_ratio
             self.__mz = struct.unpack('h', bytearray(ext_data[16:18]))[0]*mag_ratio
-        # 解析ICM20948原始陀螺仪、加速度计、磁力计数据
+        
         # (ICM20948)the original gyroscope, accelerometer, magnetometer data
         elif ext_type == self.FUNC_REPORT_ICM_RAW:
             gyro_ratio = 1 / 1000.0
@@ -180,13 +180,13 @@ class Rosmaster(object):
             self.__mx = struct.unpack('h', bytearray(ext_data[12:14]))[0]*mag_ratio
             self.__my = struct.unpack('h', bytearray(ext_data[14:16]))[0]*mag_ratio
             self.__mz = struct.unpack('h', bytearray(ext_data[16:18]))[0]*mag_ratio
-        # 解析板子的姿态角
+        
         # the attitude Angle of the board
         elif ext_type == self.FUNC_REPORT_IMU_ATT:
             self.__roll = struct.unpack('h', bytearray(ext_data[0:2]))[0] / 10000.0
             self.__pitch = struct.unpack('h', bytearray(ext_data[2:4]))[0] / 10000.0
             self.__yaw = struct.unpack('h', bytearray(ext_data[4:6]))[0] / 10000.0
-        # 解析四个轮子的编码器数据
+        
         # Encoder data on all four wheels
         elif ext_type == self.FUNC_REPORT_ENCODER:
             self.__encoder_m1 = struct.unpack('i', bytearray(ext_data[0:4]))[0]
@@ -252,9 +252,9 @@ class Rosmaster(object):
                 self.__read_car_type = car_type
             
 
-    # 接收数据 receive data
+    # receive data
     def __receive_data(self):
-        # 清空缓冲区
+        # Clear the buffer
         self.ser.flushInput()
         while True:
             head1 = bytearray(self.ser.read())[0]
@@ -281,7 +281,7 @@ class Rosmaster(object):
                         if self.__debug:
                             print("check sum error:", ext_len, ext_type, ext_data)
 
-    # 请求数据， function：对应要返回数据的功能字，parm：传入的参数。
+    
     # Request data, function: corresponding function word to return data, parm: parameter passed in
     def __request_data(self, function, param=0):
         cmd = [self.__HEAD, self.__DEVICE_ID, 0x05, self.FUNC_REQUEST_DATA, int(function) & 0xff, int(param) & 0xff]
@@ -292,7 +292,7 @@ class Rosmaster(object):
             print("request:", cmd)
         time.sleep(0.002)
 
-    # 机械臂转化角度成位置脉冲（写入角度）
+    
     # Arm converts Angle to position pulse
     def __arm_convert_value(self, s_id, s_angle):
         value = -1
@@ -310,7 +310,7 @@ class Rosmaster(object):
             value = int((3100 - 900) * (s_angle - 0) / (180 - 0) + 900)
         return value
 
-    # 机械臂转化位置脉冲成角度（读取角度）
+    
     # Arm converts position pulses into angles
     def __arm_convert_angle(self, s_id, s_value):
         s_angle = -1
