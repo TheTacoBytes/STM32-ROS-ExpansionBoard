@@ -55,7 +55,7 @@ These instructions cover the STM32 setup for communication with Python. The setu
    
    sudo service udev restart
    ```
-   After running these commands, you will need to reconnect the STM32 board for the changes to take effect on.
+   After running these commands, you will need to reconnect the STM32 board for the changes to take effect.
 
 
 ## Acknowledgments
